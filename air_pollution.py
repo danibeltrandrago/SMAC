@@ -26,7 +26,3 @@ for city in cities:
 
 with open("json/cities_idx.json", mode="w", encoding='utf-8') as f:
     json.dump(cities, f, ensure_ascii=False, indent=4)
-
-
-
-# token = requests.post("https://api.waqi.info/api/token/").json()['rxs']['obs'][0]['msg']['token']
