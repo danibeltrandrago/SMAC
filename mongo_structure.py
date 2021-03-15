@@ -11,24 +11,21 @@ cities = [{'idx':i['idx'], 'name':i['name']} for i in bounds.json()['data']]
 
 client = pymongo.MongoClient('localhost', 27020)
 db = client['smac']
-collection = db['air_pollution']
+collection = []
 
 for city in cities:
     data = requests.post("https://api.waqi.info/api/feed/@%s/aqi.json" % city['idx'], data="token=%s&id=%s" % (token, city['idx'])).json()
     try:
-        city_name = data['rxs']['obs'][0]['msg']['city']['name']
-        iaqi = data['rxs']['obs'][0]['msg']['iaqi']
-        document = [x for x in collection.find({"city.name":city_name})][0]
+        document={} 
+        document["city"] = data['rxs']['obs'][0]['msg']['city']
+        city_name = document["city"]["name"]
+        iaqi = {}
+        for key in data['rxs']['obs'][0]['msg']['iaqi']:
+            iaqi[key] = []
 
-        for key in iaqi.keys():
-            if key in document['iaqi']:
-                collection.update_one(
-                    { "_id": document['_id'] },
-                    { "$set" : { "iaqi" : iaqi } }
-                )
-
-    except KeyError as key:
+        document["iaqi"] = iaqi
+        collection.append(document)
+    except:
         pass
 
-    except Exception as err:
-        raise(err)
+result = db['air_pollution'].insert_many(collection)

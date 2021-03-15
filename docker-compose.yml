@@ -7,7 +7,7 @@ services:
       - PUID=1000
       - PGID=1000
     volumes: 
-      - /home/dani/smac/database:/data/db
+      - ./database:/data/db
     ports: 
       - 27020:27017
     restart: unless-stopped
