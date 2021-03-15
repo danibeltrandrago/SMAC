@@ -7,7 +7,18 @@ services:
       - PUID=1000
       - PGID=1000
     volumes: 
-      - /home/dani/smac/database:/data/db
+      - ./database:/data/db
     ports: 
       - 27020:27017
     restart: unless-stopped
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: monitoring_grafana
+    restart: unless-stopped
+    volumnes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
