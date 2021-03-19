@@ -9,7 +9,7 @@ token = requests.post("https://api.waqi.info/api/token/")
 bounds = requests.post(web, data='{"bounds":"1.4089512396850925,41.264754153616664,2.7992653696700303,41.6224837053181","inc":"placeholders","viewer":"webgl","zoom":10.787931681032608}')
 cities = [{'idx':i['idx'], 'name':i['name']} for i in bounds.json()['data']]
 
-client = pymongo.MongoClient('localhost', 27020)
+client = influxdb.InfluxDBClient('localhost', 8086)
 db = client['smac']
 collection = db['air_pollution']
 
