@@ -1,7 +1,7 @@
 # /usr/env/python3
 # Webpage: https://aqicn.org/map/barcelona/
 
-import requests, datetime, json, pymongo
+import requests, datetime, json, influxdb
 
 web = "https://api.waqi.info/mapq2/bounds"
 
