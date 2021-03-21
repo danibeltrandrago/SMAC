@@ -33,7 +33,7 @@ for c in coord:
 			street_name = c['properties']['description']
 			actual_state = int(state['actual_state'])
 			date = state['date']
-			data = Point(str(key)).tag("location", street_name).field("value", "hola").time(1)
+			data = Point(str(key)).tag("location", street_name).field("value", actual_state).time(date)
 			write_api.write(bucket, org, data)
 
 json_name = 'traffic_state_%s.json' % datetime.datetime.now().strftime("%H%M%S%d%m%Y")
