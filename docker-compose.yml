@@ -5,7 +5,7 @@ services:
     ports:
       - '8086:8086'
     volumes:
-      - influxdb-storage:/var/lib/influxdb
+      - influxdb-volume:/var/lib/influxdb
     environment:
       - INFLUXDB_DB=smac
       - INFLUXDB_ADMIN_USER=smac
@@ -13,15 +13,15 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - '3000:3000'
+      - '3001:3000'
     volumes:
-      - grafana-storage:/var/lib/grafana
+      - grafana-volume:/var/lib/grafana
       - ./grafana-provisioning/:/etc/grafana/provisioning
     depends_on:
       - influxdb
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SECURITY_ADMIN_USER=smac
+      - GF_SECURITY_ADMIN_PASSWORD=smac
 volumes:
-  influxdb-storage:
-  grafana-storage:
+  influxdb-volume:
+  grafana-volume:
