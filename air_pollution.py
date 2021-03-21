@@ -15,7 +15,7 @@ cities = [{'idx':i['idx'], 'name':i['name']} for i in bounds.json()['data']]
 #db = client['smac']
 #collection = db['air_pollution']
 
-token = "1vw-iWyKGxeTfKMjesb9NOBEjX1hkcyzC3jL37kd_k1LibekoyrdSJ9Gv8EC_jjafku_12yMNtADUU9rCi-iEA=="
+token = "o3KdFgq4w913LS_2gzb_PdBBvcdDi6nEZJh2TYV5Tadynp_7HS7jTKjSebSWafGUIwJLNrEOzfrnGdR4YwrYHw=="
 org = "smac"
 bucket = "smac"
 
