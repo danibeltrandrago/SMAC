@@ -38,5 +38,6 @@ for c in coord:
 
 json_name = 'traffic_state_%s.json' % datetime.datetime.now().strftime("%H%M%S%d%m%Y")
 
+print("Writing json output")
 with open('json/transit/%s' % json_name, mode="w", encoding='utf-8') as out:
 	json.dump(traffic, out, ensure_ascii=False, indent=4) 
