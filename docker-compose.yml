@@ -20,8 +20,8 @@ services:
     depends_on:
       - influxdb
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SECURITY_ADMIN_USER=smac
+      - GF_SECURITY_ADMIN_PASSWORD=smac
 volumes:
   influxdb-storage:
   grafana-storage:
