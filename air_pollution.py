@@ -2,8 +2,7 @@
 # Webpage: https://aqicn.org/map/barcelona/
 
 import requests, datetime, json
-from influxdb_client import InfluxDBClient, Point, WritePrecision
-from influxdb_client.client.write_api import SYNCHRONOUS
+from influxdb import InfluxDBClient
 
 web = "https://api.waqi.info/mapq2/bounds"
 
@@ -17,10 +16,10 @@ cities = [{'idx':i['idx'], 'name':i['name']} for i in bounds.json()['data']]
 
 token = "1vw-iWyKGxeTfKMjesb9NOBEjX1hkcyzC3jL37kd_k1LibekoyrdSJ9Gv8EC_jjafku_12yMNtADUU9rCi-iEA=="
 org = "smac"
-bucket = "smac"
+bucket = "air_pollution"
 
-client = InfluxDBClient(url="http://localhost:8086", token=token)
-write_api = client.write_api(write_options=SYNCHRONOUS)
+client = InfluxDBClient(host="localhost", port=8086)
+client.switch_database("smac")
 
 for city in cities:
     data = requests.post("https://api.waqi.info/api/feed/@%s/aqi.json" % city['idx'], data="token=%s&id=%s" % (token, city['idx'])).json()
@@ -30,9 +29,24 @@ for city in cities:
         #document = [x for x in collection.find({"city.name":city_name})][0]
 
         for key in iaqi.keys():
-            #data = "pollution,location={0},{1}={2}".format(city_name.split(',')[0].replace(' ', '_')  ,key,iaqi[key]['v'])
-            data = Point(str(key)).tag("location", city_name.split(','[0].replace(' ','_'))).field("value", float(iaqi[key]['v'])).time(iaqi[key]['t'])
-            write_api.write(bucket, org, data)
+            if key == 'dew':
+                print("{3},location={0},{1}={2}".format(city_name.split(',')[0].replace(' ', '_')  ,key,iaqi[key]['v'], str(key)))
+            label = str(key)
+            fieldset = city_name.split(','[0].replace(' ','_'))
+            value = float(iaqi[key]['v'])
+            json_body = [
+                {
+                    "measurement": label,
+                    "tags": {
+                        "city": fieldset
+                    },
+                    "time": datetime.date.today().strftime("%Y-%m-%d %H:%M:%S"),
+                    "fields": {
+                        "value": value
+                    }
+                }
+            ]
+            client.write_points(json_body)
 
     except KeyError as keyError:
         print(keyError)
