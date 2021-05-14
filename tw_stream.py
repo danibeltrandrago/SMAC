@@ -1,18 +1,24 @@
 import tweepy
 import datetime
-from influxdb_client import InfluxDBClient, Point, WritePrecision
-from influxdb_client.client.write_api import SYNCHRONOUS
+from influxdb import InfluxDBClient
 
 ## INFLUX config ##
 
-token = "o3KdFgq4w913LS_2gzb_PdBBvcdDi6nEZJh2TYV5Tadynp_7HS7jTKjSebSWafGUIwJLNrEOzfrnGdR4YwrYHw=="
-org = "smac"
-bucket = "smac"
+#token = "o3KdFgq4w913LS_2gzb_PdBBvcdDi6nEZJh2TYV5Tadynp_7HS7jTKjSebSWafGUIwJLNrEOzfrnGdR4YwrYHw=="
+#org = "smac"
+#bucket = "smac"
 
 ## INFLUX connect ##
 
-client = InfluxDBClient(url="http://localhost:8086", token=token)
-write_api = client.write_api(write_options=SYNCHRONOUS)
+#client = InfluxDBClient(url="http://localhost:8086", token=token)
+#write_api = client.write_api(write_options=SYNCHRONOUS)
+
+token = "1vw-iWyKGxeTfKMjesb9NOBEjX1hkcyzC3jL37kd_k1LibekoyrdSJ9Gv8EC_jjafku_12yMNtADUU9rCi-iEA=="
+org = "smac"
+bucket = "air_pollution"
+
+client = InfluxDBClient(host="localhost", port=8086)
+client.switch_database("smac")
 
 ## Twitter API config ##
 
@@ -31,14 +37,34 @@ api = tweepy.API(auth)
 
 class CustomStreamListener(tweepy.StreamListener):
     def on_status(self, status):
-        lista = ["no","si", " contaminación ", " polución ", " atasco ", " CO2 ", " greenpeace "]
+        lista = ["no","si", " contaminación ", " polución ", " atasco ", " CO2 ", " greenpeace ", " retenciones ", " retencions "
+        , " escape ", " gas ", " repsol ", " contaminantes ", "cambio climatico ", " contaminado ", " contaminada "]
         if [element for element in lista if(element in status.text)] and status.lang in ['en', 'es', 'ca']: 
             print('tweet filtered arrived: ', status.text)
             loc = status.coordinates
             if status.coordinates == None:
                 loc = status.user.location
-            data = Point(str(status.created_at)).tag("date", str(status.created_at)).tag("location", str(loc)).field("value", str(status.text))
-            write_api.write(bucket, org, data)
+            #data = Point(str(status.created_at)).tag("date", str(status.created_at)).tag("location", str(loc)).field("value", str(status.text))
+            #write_api.write(bucket, org, data)
+
+            # Second method for writing to influxDB
+            el = [element for element in lista if(element in status.text)][0]
+            json_body = [
+                {
+                    "measurement": "twitter",
+                    "tags": {
+                        "location": str(loc),
+                        "key_word": str(el)
+                    },
+                    "time": str(status.created_at),
+                    "fields": {
+                        "tweet": str(status.text)
+                    }
+                }
+            ]
+            print("JSON: " + str(json_body))
+            client.write_points(json_body)
+
 
         else:
             print('tweet arrived: ', status.text)

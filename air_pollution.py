@@ -36,9 +36,10 @@ for city in cities:
             value = float(iaqi[key]['v'])
             json_body = [
                 {
-                    "measurement": label,
+                    "measurement": "air_pollution",
                     "tags": {
-                        "city": fieldset
+                        "city": fieldset,
+                        "label":label
                     },
                     "time": datetime.date.today().strftime("%Y-%m-%d %H:%M:%S"),
                     "fields": {
